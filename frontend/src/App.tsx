@@ -1,122 +1,133 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+
+import { useState } from "react";
+import CalculatorD from "../../backend/calc.ts";
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+  const [threatD,setThreat] =useState({
+    data: {
+      y: 31.919864368108467 ,
+      x: 34.96432543129473 ,
+      b: 32.03459017351866,
+      a: 33.82495395183825,
+      r: 1,
+      n: 'N',
+      e: 'E',
+      threatend:false
+    }
+    
+  })
+  
+  function handle_LatChange(e: { target: { value: any; }; }) {
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        y: e.target.value,
+        threatend: CalculatorD.inside_threat_range(threatD.data.x , e.target.value, threatD.data.a ,threatD.data.b , threatD.data.r),
+        
+      }
+      
+    });
+  }
+  function handle_LongChange(e: { target: { value: any; }; }) {
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        x: e.target.value,
+        threatend: CalculatorD.inside_threat_range(e.target.value , threatD.data.y , threatD.data.a ,threatD.data.b , threatD.data.r)
+      }
+    });
+  }
+  function handle_Lau_LatChange(e: { target: { value: any; }; }) {
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        b: e.target.value,
+        threatend: CalculatorD.inside_threat_range(threatD.data.x , threatD.data.y , threatD.data.a ,e.target.value , threatD.data.r)
+      }
+    });
+    
+    if(threatD.data.y < 0){
+      threatD.data.n = 'S'  
+    }
+  }
+  function handle_Lau_LongChange(e: { target: { value: any; }; }) {
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        a: e.target.value,
+        threatend: CalculatorD.inside_threat_range(threatD.data.x , threatD.data.y , e.target.value ,threatD.data.b , threatD.data.r)
+      }
+    });
+    if (threatD.data.a <0){
+      threatD.data.e = 'W'
+    }
+  }
+  function handleRChange(e: { target: { value: any; }; }) {
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        r: e.target.value,
+        threatend: CalculatorD.inside_threat_range(threatD.data.x , threatD.data.y , threatD.data.a ,threatD.data.b , e.target.value)
+      }
+    });
+  }
+  return(
+        <>
+          
+            <label>
+            lat_jet:
+            <input
+              type="number"
+              value={threatD.data.y}
+              onChange={handle_LatChange}/>
+            </label>
+            <label>
+            Long_jet:
+            <input
+              type="number"
+              value={threatD.data.x}
+              onChange={handle_LongChange}/>
+            </label>
+            <label>
+            lat_Launch:
+            <input
+              type="number"
+              value={threatD.data.b}
+              onChange={handle_Lau_LatChange}/>
+            </label>
+            <label>
+            Long_Launch:
+            <input
+              type="number"
+              value={threatD.data.a}
+              onChange={handle_Lau_LongChange}/>
+            </label>
+            <label>
+            Threat range in Miles:
+            <input
+              type="number"
+              value={threatD.data.r}
+              onChange={handleRChange}/>
+            </label>
+            
+            <div>
+              <i>launched from: {threatD.data.a} {threatD.data.n}° , {threatD.data.b} {threatD.data.e}°. with a range of: {threatD.data.r} degrees</i>
+            </div>
+            <br />
+            under threat: {String(threatD.data.threatend)}
+      </> 
   )
+
 }
 
 export default App
+
+
+
+
