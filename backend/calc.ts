@@ -38,14 +38,14 @@ class threat {
         //dist = circumference * r/360
         //(dist/circumference) *360 = r
         //24,901= circumference
-        let circumference:number = 24.901;
+        const circumference:number = 24901;
         this.r=((dist+3.72823)/circumference)*360 //בבדיקות יצא לי שיש סטיה של בערך 6 קילומטרים בחישוב שלי ולכן מתקן לפי אותה הסטייה
         this.dist=dist;
 
         return this.r
     }
     getDegToMiles(r:number):number{
-        let circumference:number = 24.901;
+        let circumference:number = 24901;
         this.dist=circumference * (r/360)
         return this.dist
     }
@@ -102,6 +102,7 @@ class jet {
 class CalculatorD{
     
     public static inside_threat_range (x: number, y: number, a: number, b: number, r: number): boolean {
+        r=this.MilesToDeg(r);
         console.log(`Checking if coordinates: (${x}, ${y}) is inside or on the circle with center at: (${a}, ${b}) and threat radius of: ${r}`);
         const distance = Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
         console.log(`Distance: ${distance}, threat: ${r}`);
@@ -115,7 +116,33 @@ class CalculatorD{
     console.log(inside_threat_range(0, 0, 3, 1.5, 2.4)); // false
     */
 
-    
+    public static MilesToDeg(dist:number): number {
+        console.log(`Converting ${dist} miles to degrees`);
+        //dist = circumference * r/360
+        //(dist/circumference) *360 = r
+        //24,901= Earth's circumference
+        const circumference:number = 24901;
+        let r:number;
+        //6km correction factor added based on testing results = 3.72823 Miles
+        //בבדיקות יצא לי שיש סטיה של בערך 6 קילומטרים בחישוב שלי ולכן מתקן לפי אותה הסטייה
+        r=dist+3.5;
+        console.log('dist+3.5 = ' + r);
+        r=r/circumference;
+        console.log("r ="+r);
+        r=r*360
+        console.log("r ="+r);
+        return r;
+    }
+    public static DegToMiles(r:number):number{
+        console.log(`Converting ${r} degrees to miles`);
+        const circumference:number = 24901;
+        let dist:number;
+        //dist=circumference * (r/360)
+        dist=circumference 
+        dist=dist*(r/360)
+        return dist
+    }
+
 
 
     public static find_Edge (a: number, b: number, r: number): { east: number, west: number, north: number, south: number } {
