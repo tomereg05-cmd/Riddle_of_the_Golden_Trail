@@ -11,3 +11,53 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+model User { 
+  id    Int     @id @default(autoincrement()) 
+  email String  @unique
+  name  String?
+  posts Post[]
+} 
+model Post { 
+  id        Int     @id @default(autoincrement()) 
+  title     String
+  content   String?
+  published Boolean @default(false) 
+  author    User    @relation(fields: [authorId], references: [id]) 
+  authorId  Int
+} 
+model Aircraft{
+  id        Int     @id @default(autoincrement()) 
+  icao24 String
+  callsign String?
+  origin_country String
+  time_position Int?
+  last_contact Int
+  longitude Float?
+  latitude Float?
+  baro_altitude Float?
+  on_ground Boolean
+  velocity Float?
+  true_track Float?
+  vertical_rate Float?
+  sensors Int[]
+  geo_altitude Float?
+  squawk String?
+  spi Boolean
+  position_source Int
+  operation Operation[]
+}
+model Threat{
+  id            Int     @id @default(autoincrement()) 
+  lat_threat    Int
+  long_threat   Int
+  speed_threat  Int
+  range_threat  Int
+  operation     Operation[]
+}
+model Operation{
+  id          Int       @id @default(autoincrement()) 
+  threat      Threat    @relation(fields: [threatId],references: [id])
+  threatId    Int
+  aircraft    Aircraft?  @relation(fields:[aircraftId],references: [id])
+  aircraftId  Int?
+}
