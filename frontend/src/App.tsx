@@ -19,22 +19,21 @@ function App() {
 
   const [threatD,setThreat] =useState({
     data: {
-      y: 31.91986436810846 ,
-      x: 34.9643254312947 ,
-      b: 32.0345901735186,
-      a: 33.8249539518382,
-      r: 1,
+      lat_friend: 31.91986436810846 ,
+      long_friend: 34.9643254312947 ,
+      lat_threat: 32.0345901735186,
+      long_threat: 33.8249539518382,
       n: 'N',
       e: 'E',
       threatend:false,
-      dist:60
+      range:60
     }
     
   })
   const map = useMap();
   const [mapCenter, setMapCenter] = useState({
-    lat: threatD.data.y,
-    lng: threatD.data.x
+    lat: threatD.data.lat_friend,
+    lng: threatD.data.long_friend
   });
    useEffect(() => {
     if (!map) return;
@@ -68,20 +67,119 @@ MK1 try:
   }
 */
 
+  //mk3 faulty
+/*
+  async function get_calculated_threat(lat_friend:number,long_friend:number,lat_threat:number,long_threat:number,range:number){
+    const response = await axios.post('http://localhost:5000/api/check-threat', {
+      x: long_friend,
+      y: lat_friend,
+      a: long_threat,
+      b: lat_threat,
+      range: range
+    });
+    console.log(response.data);
+    setThreat({
+      ...threatD,
+      data: {
+        ...threatD.data,
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        range:response.data.range,
+        threatend: response.data.result,
+        
+      }
+    });
+  }
 
+  async function handeChange(change:number,changed_field:string) {
+    switch(changed_field){
+      case "x":
+        setThreat({
+          ...threatD,
+          data: {
+            ...threatD.data,
+            long_friend: change,
+          }
+        });
+        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+        
+      case "y":
+        setThreat({
+            ...threatD,
+            data: {
+              ...threatD.data,
+              lat_friend: change,
+            }
+        });
+        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+
+      case "a":
+        setThreat({
+            ...threatD,
+            data: {
+              ...threatD.data,
+              long_threat: change,
+            }
+        });
+        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+
+      case "b":
+        setThreat({
+            ...threatD,
+            data: {
+              ...threatD.data,
+              lat_threat: change,
+            }
+        });
+        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+
+      case "r":
+        setThreat({
+            ...threatD,
+            data: {
+              ...threatD.data,
+              range:change,
+            },
+        });
+        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+    }
+    
+    
+    console.log ("frontend answer: "+threatD.data.threatend)
+  }
+
+  function handle_LatChange____(e: { target: { value: any; }; }){
+    handeChange(e.target.value,"y")
+  }
+  function handle_LongChange____(e: { target: { value: any; }; }){
+    handeChange(e.target.value,"x")
+  }
+  function handle_Lau_LatChange____(e: { target: { value: any; }; }){
+    handeChange(e.target.value,"b")
+  }
+  function handle_Lau_LongChange____(e: { target: { value: any; }; }){
+    handeChange(e.target.value,"a")
+  }
+  function handleRChange____(e: { target: { value: any; }; }){
+    handeChange(e.target.value,"r")
+  }
+*/
+
+  // former input functionsL MK3
+  ///*
   async function handle_LatChange____(e: { target: { value: any; }; }) {
     //explaining to my future self:
     //שולח לשרת שיחזיר לי את החישוב עם מה שיש לי
     const response = await axios.post('http://localhost:5000/api/check-threat', {
-      x: threatD.data.x,
+      x: threatD.data.long_friend,
       y: e.target.value,
-      a: threatD.data.a,
-      b: threatD.data.b,
-      r: threatD.data.dist,
-      isInside: threatD.data.threatend,
-      dist: threatD.data.dist
+      a: threatD.data.long_threat,
+      b: threatD.data.lat_threat,
+      range: threatD.data.range
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
     //מעדכן את מה שצריך לעדכן לפי ההחזר של השרת
     //כנ"ל גם בפונקציות הבאות- אין לי כח לכתוב
 
@@ -89,31 +187,27 @@ MK1 try:
       ...threatD,
       data: {
         ...threatD.data,
-        x: response.data.x,
-        y: response.data.y,
-        a: response.data.a,
-        b: response.data.b,
-        r: response.data.r,
-        dist:response.data.dist,
-        threatend: response.data.isInside,
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        range:response.data.range,
+        threatend: response.data.result,
         
       }
     });
     console.log ("frontend answer: "+threatD.data.threatend)
-    map.panTo(mapCenter)
+    //map.panTo(mapCenter)
   }
-
   async function handle_LongChange____(e: { target: { value: any; }; }) {
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       x: e.target.value,
-      y: threatD.data.y,
-      a: threatD.data.a,
-      b: threatD.data.b,
-      r: threatD.data.dist,
-      isInside: threatD.data.threatend,
-      dist:threatD.data.dist,
+      y: threatD.data.lat_friend,
+      a: threatD.data.long_threat,
+      b: threatD.data.lat_threat,
+      range:threatD.data.range,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -121,28 +215,25 @@ MK1 try:
       ...threatD,
       data: {
         ...threatD.data,
-        x: response.data.x,
-        y: response.data.y,
-        a: response.data.a,
-        b: response.data.b,
-        r: response.data.r,
-        dist:response.data,
-        threatend: response.data.isInside,
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        range:response.data,
+        threatend: response.data.result,
         
       }
     });
   }
   async function handle_Lau_LatChange____(e: { target: { value: any; }; }) {
     const response = await axios.post('http://localhost:5000/api/check-threat', {
-      x: threatD.data.x,
-      y: threatD.data.y,
-      a: threatD.data.a,
+      x: threatD.data.long_friend,
+      y: threatD.data.lat_friend,
+      a: threatD.data.long_threat,
       b: e.target.value,
-      r: threatD.data.dist,
-      isInside: threatD.data.threatend,
-      dist:threatD.data.dist,
+      range:threatD.data.range,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -150,13 +241,12 @@ MK1 try:
       ...threatD,
       data: {
         ...threatD.data,
-        x: response.data.x,
-        y: response.data.y,
-        a: response.data.a,
-        b: response.data.b,
-        r: response.data.r,
-        threatend: response.data.isInside,
-        dist:response.data
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        threatend: response.data.result,
+        range:response.data.range,
         
       }
     });
@@ -169,15 +259,13 @@ MK1 try:
   }
   async function handle_Lau_LongChange____(e: { target: { value: any; }; }) {
     const response = await axios.post('http://localhost:5000/api/check-threat', {
-      x: threatD.data.x,
-      y: threatD.data.y,
+      x: threatD.data.long_friend,
+      y: threatD.data.lat_friend,
       a: e.target.value,
-      b: threatD.data.b,
-      r: threatD.data.dist,
-      isInside: threatD.data.threatend,
-      dist:threatD.data.dist,
+      b: threatD.data.lat_threat,
+      range:threatD.data.range,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -185,13 +273,12 @@ MK1 try:
       ...threatD,
       data: {
         ...threatD.data,
-        x: response.data.x,
-        y: response.data.y,
-        a: response.data.a,
-        b: response.data.b,
-        r: response.data.r,
-        threatend: response.data.isInside,
-        dist:response.data.dist
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        threatend: response.data.result,
+        range:response.data.range
         
       }
     });
@@ -204,35 +291,32 @@ MK1 try:
   async function handleRChange____(e: { target: { value: any; }; }) {
     
     const response = await axios.post('http://localhost:5000/api/check-threat', {
-      x: threatD.data.x,
-      y: threatD.data.y,
-      a: threatD.data.a,
-      b: threatD.data.b,
-      r: e.target.value,
-      isInside: threatD.data.threatend,
-      dist: e.target.value
+      x: threatD.data.long_friend,
+      y: threatD.data.lat_friend,
+      a: threatD.data.long_threat,
+      b: threatD.data.lat_threat,
+      range: e.target.value
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
     
 
     setThreat({
       ...threatD,
       data: {
         ...threatD.data,
-        threatend: response.data.isInside,
-        x: response.data.x,
-        y: response.data.y,
-        a: response.data.a,
-        b: response.data.b,
-        r: response.data.r,
-        dist:response.data.dist,
+        threatend: response.data.result,
+        long_friend: response.data.x,
+        lat_friend: response.data.y,
+        long_threat: response.data.a,
+        lat_threat: response.data.b,
+        range:response.data.range,
         
       }
     });
     setMapCenter
     console.log('done!---------------------------------------------------------------------------------------------------------------------')
   }
-
+ // */
 
   // former input functionsL MK2
   /*
@@ -249,7 +333,7 @@ MK1 try:
       isInside: threatD.data.threatend,
       dist: threatD.data.dist
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
     //מעדכן את מה שצריך לעדכן לפי ההחזר של השרת
     //כנ"ל גם בפונקציות הבאות- אין לי כח לכתוב
 
@@ -281,7 +365,7 @@ MK1 try:
       isInside: threatD.data.threatend,
       dist:threatD.data.dist,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -310,7 +394,7 @@ MK1 try:
       isInside: threatD.data.threatend,
       dist:threatD.data.dist,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -345,7 +429,7 @@ MK1 try:
       isInside: threatD.data.threatend,
       dist:threatD.data.dist,
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
 
     
 
@@ -380,7 +464,7 @@ MK1 try:
       isInside: threatD.data.threatend,
       dist: e.target.value
     });
-    console.log("backend answer: "+response.data.isInside);
+    console.log("backend answer: "+response.data.result);
     
 
     setThreat({
@@ -402,7 +486,6 @@ MK1 try:
   }
 
 */
-
 
   //former input functions: mk1
   /*
@@ -485,7 +568,7 @@ MK1 try:
             <td>
               <input
                 type="number"
-                value={threatD.data.y}
+                value={threatD.data.lat_friend}
                 onChange={handle_LatChange____}/>
             </td>
           </tr>
@@ -494,7 +577,7 @@ MK1 try:
             <td>
               <input
                 type="number"
-                value={threatD.data.x}
+                value={threatD.data.long_friend}
                 onChange={handle_LongChange____}/>
             </td>
           </tr>
@@ -503,7 +586,7 @@ MK1 try:
             <td>
               <input
                 type="number"
-                value={threatD.data.b}
+                value={threatD.data.lat_threat}
                 onChange={handle_Lau_LatChange____}/>
             </td>
           </tr>
@@ -512,7 +595,7 @@ MK1 try:
             <td>
               <input
                 type="number"
-                value={threatD.data.a}
+                value={threatD.data.long_threat}
                 onChange={handle_Lau_LongChange____}/>
             </td>
           </tr>
@@ -521,17 +604,17 @@ MK1 try:
             <td>
               <input
                 type="number"
-                value={threatD.data.dist}
+                value={threatD.data.range}
                 onChange={handleRChange____}/>
                 
             </td>
           </tr>
           <tr>
-            <td colSpan={2}>
+            <td colSpan={3}>
               <div style={{ width: "60vw", height: "50vh" }}>
 
                 <APIProvider apiKey="AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc" >
-                    <Map defaultZoom={12} defaultCenter={{ lat: threatD.data.y, lng: threatD.data.x }} mapId="DEMO_MAP_ID">
+                    <Map defaultZoom={12} defaultCenter={{ lat: threatD.data.lat_friend, lng: threatD.data.long_friend }} mapId="DEMO_MAP_ID">
                       <AdvancedMarker
                           position={mapCenter}
                         />
@@ -545,7 +628,7 @@ MK1 try:
         </tbody>
       </table>
       <div>
-        <i>launched from: {threatD.data.a} {threatD.data.n}° , {threatD.data.b} {threatD.data.e}°. with a range of: {threatD.data.r} degrees</i>
+        <i>launched from: {threatD.data.long_threat} {threatD.data.n}° , {threatD.data.lat_threat} {threatD.data.e}°. with a range of: {threatD.data.range} nautical Miles</i>
       </div>
       <br />
       under threat: {String(threatD.data.threatend)}

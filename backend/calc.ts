@@ -182,7 +182,7 @@ class CalculatorD{
         let Jet:jet;
         for (let i:number=0;i<jets.length;i++){
             Jet=jets[i];
-            b=new ans(this.inside_threat_range(Jet.getX(),Jet.getY(),Tx,Ty,Tr,false,Td).isInside,this.calcDist(Jet.getX(),Jet.getY(),Tx,Ty),Jet)
+            b=new ans(this.check_inside_threat(Jet.getX(),Jet.getY(),Tx,Ty,Td),this.calcDist(Jet.getX(),Jet.getY(),Tx,Ty),Jet)
             a.push(b);
         }
 
@@ -208,19 +208,15 @@ class CalculatorD{
         return d;
     }
     
-    public static inside_threat_range (x: number, y: number, a: number, b: number, r: number, isInside: boolean, range:number): {x: number, y: number, a: number, b: number, r: number, isInside: boolean, range:number} {
-        r=this.MilesToDeg(range,y);
-        console.log(`Checking if coordinates: (${y}, ${x}) is inside or on the circle with center at: (${b}, ${a}) and threat radius of: ${r}`);
-        let distance = this.calcDist(y,x,b,a);
-        r=r*1000;
-        r=Math.floor(r);
-        r=r/1000;
-        distance=Math.floor(distance*1000);
-        distance=distance/1000;
-        console.log(`Distance: ${distance}, threat: ${r}`);
-        console.log((distance <= r) + " check");
-        isInside = distance <= r;
-        return { x, y, a, b, r, isInside ,range};
+    public static check_inside_threat (long_friend: number, lat_friend: number, long_threat: number, lat_threat: number, dist_miles:number): boolean {
+        console.log(`Checking if coordinates: (${lat_friend}, ${long_friend}) is inside or on the circle with center at: (${lat_threat}, ${long_threat}) and threat radius of: ${dist_miles}`);
+        let distanceInMiles=this.calcDist(lat_friend,long_friend,lat_threat,long_threat);
+        distanceInMiles=Math.floor(distanceInMiles*1000);
+        distanceInMiles=distanceInMiles/1000;
+        console.log(`Distance: ${distanceInMiles}, threat: ${dist_miles}`);
+        console.log((distanceInMiles <= dist_miles) + " check");
+        const isInside:boolean = distanceInMiles <= dist_miles;
+        return isInside;
     }
 
     /*
@@ -229,15 +225,15 @@ class CalculatorD{
     console.log(inside_threat_range(3, 3, 0, 0, 2)); // false
     console.log(inside_threat_range(0, 0, 3, 1.5, 2.4)); // false
     */
-
+    /*
     public static MilesToDeg(dist:number,lat:number): number {
         
         // 60 nautical mile = 1 degree of latitude (-90<-0->90)
-        // R_degrees = dist/(60*Math.cos(long))
+        // R_degrees = dist/(60*Math.cos(lat))
         console.log(`Converting ${dist} miles to degrees: `);
         let Degrees:number;
-        Degrees=Number(dist);
-        Degrees=Degrees/(60*Math.cos(lat));
+        let temp:number = Math.cos(lat);
+        Degrees=dist/(60*temp);
         console.log(dist + 'Miles are '+Degrees+" degrees!");
         return Degrees;
     }
@@ -249,7 +245,7 @@ class CalculatorD{
         Miles= r*Number(60*Math.cos(lat))
         return Miles;
     }
-
+    */
 
 
     public static find_Edge (a: number, b: number, r: number): { east: number, west: number, north: number, south: number } {

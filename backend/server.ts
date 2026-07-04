@@ -14,7 +14,7 @@ npm i -D tsx                                - inside backend folder
 npm i axios                                 - inside frontend folder
 */
 // npm run devstart # run the "devstart" package script                       - to run the backend server -> when in the backend folder
-
+// or just npm run  devStart
 
 import express from 'express';
 import cors from 'cors';
@@ -36,21 +36,24 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 
+function delay(time:number) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
 //req = request, res = response
 app.get("/api" , (req, res) => {
     res.json({ message: "Hello from the backend!  ;} " });
 });
 
 
+
+
 app.post('/api/check-threat', (req, res) => {
-    const { x , y, a, b, r, isInside, dist} = req.body;
-
-
+    const { x , y, a, b, range} = req.body;
+    const result = CalculatorD.check_inside_threat(x, y, a, b ,range);
+    res.json({x,y,a,b,range,result})//לחזור
 
     
-
-    const result = CalculatorD.inside_threat_range(x, y, a, b, r, isInside ,dist);
-    res.json(result);
 });
 
 app.post('/api/underThreat',(req ,res) => {
@@ -65,13 +68,18 @@ app.post('/api/underThreat',(req ,res) => {
     
 
     */
-});
+   delay(1000).then(
 
+   );
+
+});
+/*
 app.post('/api/deg-to-miles', (req, res) =>{
     const {r, lat} = req.body;
     const resault:number = CalculatorD.DegToMiles(r, lat);
     res.json(resault);
 });
+*/
 /*
 
 export CLIENT_ID="the dogfighter-api-client"
