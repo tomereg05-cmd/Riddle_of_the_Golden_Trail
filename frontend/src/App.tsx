@@ -572,74 +572,76 @@ MK1 try:
 
   return(
     <> 
-      <h1>Learn and Practice: make mistakes</h1>
-      <table
-        className="lister">
-        <tbody>
-          <tr>
-            <td>lat_jet</td>
-            <td>
-              <input
-                type="number"
-                value={threatD.data.lat_friend}
-                onChange={handle_LatChange____}/>
-            </td>
-          </tr>
-          <tr>
-            <td>long_jet</td>
-            <td>
-              <input
-                type="number"
-                value={threatD.data.long_friend}
-                onChange={handle_LongChange____}/>
-            </td>
-          </tr>
-          <tr>
-            <td>lat_Launch</td>
-            <td>
-              <input
-                type="number"
-                value={threatD.data.lat_threat}
-                onChange={handle_Lau_LatChange____}/>
-            </td>
-          </tr>
-          <tr>
-            <td>long_Launch</td>
-            <td>
-              <input
-                type="number"
-                value={threatD.data.long_threat}
-                onChange={handle_Lau_LongChange____}/>
-            </td>
-          </tr>
-          <tr>
-            <td>Threat Range in nautical Miles:</td>
-            <td>
-              <input
-                type="number"
-                value={threatD.data.range}
-                onChange={handleRChange____}/>
-                
-            </td>
-          </tr>
-          <tr>
-            <td colSpan={3}>
-              <div style={{ width: "60vw", height: "50vh" }}>
+      <table>
+        <table
+          className="lister">
+          <tbody>
+            <tr>
+              <td>lat_jet</td>
+              <td>
+                <input
+                  type="number"
+                  value={threatD.data.lat_friend}
+                  onChange={handle_LatChange____}/>
+              </td>
+            </tr>
+            <tr>
+              <td>long_jet</td>
+              <td>
+                <input
+                  type="number"
+                  value={threatD.data.long_friend}
+                  onChange={handle_LongChange____}/>
+              </td>
+            </tr>
+            <tr>
+              <td>lat_Launch</td>
+              <td>
+                <input
+                  type="number"
+                  value={threatD.data.lat_threat}
+                  onChange={handle_Lau_LatChange____}/>
+              </td>
+            </tr>
+            <tr>
+              <td>long_Launch</td>
+              <td>
+                <input
+                  type="number"
+                  value={threatD.data.long_threat}
+                  onChange={handle_Lau_LongChange____}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Threat Range in nautical Miles:</td>
+              <td>
+                <input
+                  type="number"
+                  value={threatD.data.range}
+                  onChange={handleRChange____}/>
+                  
+              </td>
+            </tr>
+            <tr>
+              <td colSpan={3}>
+                <div style={{ width: "60vw", height: "50vh" }}>
 
-                <APIProvider apiKey="AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc" >
-                    <Map defaultZoom={12} defaultCenter={{ lat: threatD.data.lat_friend, lng: threatD.data.long_friend }} mapId="DEMO_MAP_ID">
-                      <AdvancedMarker
-                          position={mapCenter}
-                        />
-                    </Map>
-                </APIProvider>
-                </div>
-            </td>
-          </tr>
-            
+                  <APIProvider apiKey="AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc" >
+                      <Map defaultZoom={12} defaultCenter={{ lat: threatD.data.lat_friend, lng: threatD.data.long_friend }} mapId="DEMO_MAP_ID">
+                        <AdvancedMarker
+                            position={mapCenter}
+                          />
+                      </Map>
+                  </APIProvider>
+                  </div>
+              </td>
+            </tr>
+              
 
-        </tbody>
+          </tbody>
+        </table>
       </table>
+      
       <div>
         <i>launched from: {threatD.data.long_threat} {threatD.data.n}° , {threatD.data.lat_threat} {threatD.data.e}°. with a range of: {threatD.data.range} nautical Miles</i>
       </div>

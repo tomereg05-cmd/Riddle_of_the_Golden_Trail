@@ -28,20 +28,20 @@ model Post {
 model Aircraft{
   id        Int     @id @default(autoincrement()) 
   icao24 String
-  callsign String
+  callsign String?
   origin_country String
-  time_position Int
+  time_position Int?
   last_contact Int
-  longitude Float
-  latitude Float
-  baro_altitude Float
+  longitude Float?
+  latitude Float?
+  baro_altitude Float?
   on_ground Boolean
-  velocity Float
-  true_track Float
-  vertical_rate Float
+  velocity Float?
+  true_track Float?
+  vertical_rate Float?
   sensors Int[]
-  geo_altitude Float
-  squawk String
+  geo_altitude Float?
+  squawk String?
   spi Boolean
   position_source Int
   operation Operation[]
@@ -55,9 +55,9 @@ model Threat{
   operation     Operation[]
 }
 model Operation{
-  id          Int     @id @default(autoincrement()) 
-  threat      Threat  @relation(fields: [threatId],references: [id])
+  id          Int       @id @default(autoincrement()) 
+  threat      Threat    @relation(fields: [threatId],references: [id])
   threatId    Int
-  aircraft    Aircraft@relation(fields:[aircraftId],references: [id])
-  aircraftId  Int
+  aircraft    Aircraft?  @relation(fields:[aircraftId],references: [id])
+  aircraftId  Int?
 }
