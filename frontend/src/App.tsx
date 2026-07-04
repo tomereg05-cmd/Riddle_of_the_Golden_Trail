@@ -67,7 +67,7 @@ MK1 try:
   }
 */
 
-  //mk3 faulty
+  //mk4 faulty
 /*
   async function get_calculated_threat(lat_friend:number,long_friend:number,lat_threat:number,long_threat:number,range:number){
     const response = await axios.post('http://localhost:5000/api/check-threat', {
@@ -94,16 +94,24 @@ MK1 try:
   }
 
   async function handeChange(change:number,changed_field:string) {
+    ///*
     switch(changed_field){
       case "x":
         setThreat({
           ...threatD,
           data: {
             ...threatD.data,
+            lat_friend: threatD.data.lat_friend,
             long_friend: change,
+            long_threat: threatD.data.long_threat,
+            lat_threat: threatD.data.lat_threat,
+            range:threatD.data.range,
           }
         });
-        get_calculated_threat(threatD.data.lat_friend,threatD.data.long_friend,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+        console.log(change)
+        console.log(threatD.data)
+        get_calculated_threat(threatD.data.lat_friend,change,threatD.data.lat_threat,threatD.data.long_threat,threatD.data.range)
+        console.log('case x done')
         
       case "y":
         setThreat({
@@ -147,6 +155,8 @@ MK1 try:
     }
     
     
+    
+    
     console.log ("frontend answer: "+threatD.data.threatend)
   }
 
@@ -154,7 +164,10 @@ MK1 try:
     handeChange(e.target.value,"y")
   }
   function handle_LongChange____(e: { target: { value: any; }; }){
+    console.log(e.target.value)
+    console.log('change x')
     handeChange(e.target.value,"x")
+    
   }
   function handle_Lau_LatChange____(e: { target: { value: any; }; }){
     handeChange(e.target.value,"b")
@@ -316,7 +329,7 @@ MK1 try:
     setMapCenter
     console.log('done!---------------------------------------------------------------------------------------------------------------------')
   }
- // */
+  //*/
 
   // former input functionsL MK2
   /*
