@@ -18,9 +18,7 @@ npm i axios                                 - inside frontend folder
 
 import express from 'express';
 import cors from 'cors';
-import CalculatorD from './calc';
-import threat from './calc';
-import ans from './calc';
+import CalculatorD, { importantDataClient } from './calc';
 
 
 const corsOptions = {
@@ -49,10 +47,61 @@ app.get("/api" , (req, res) => {
 
 
 app.post('/api/check-threat', (req, res) => {
-    const { x , y, a, b, range} = req.body;
-    const result = CalculatorD.check_inside_threat(x, y, a, b ,range);
-    res.json({x,y,a,b,range,result})//לחזור
+    const {speed, a, b, range} = req.body;
+    console.log("initial param: "+speed+" "+a+" "+b+" "+range)
+    const externalResult = CalculatorD.fakeAPI();
+    let j:number;
+    let i:any[]= [];
+    let FriendliesWith_KnownLocation:importantDataClient[]=[]
+    let distanceBetweenThem:number
+    for (j=0;j<externalResult.states.length;j++){
+        i=externalResult.states[j]
+        if (i[6]!=null&& i[5]!=null){
+            distanceBetweenThem=CalculatorD.calcDist(i[5],i[6],a,b)
 
+            FriendliesWith_KnownLocation.push(new importantDataClient(
+                CalculatorD.check_inside_threat(i[5],i[6],a,b,range),
+                distanceBetweenThem,
+                j,
+                i[6],
+                i[5],
+                CalculatorD.interceptingTime(distanceBetweenThem,speed)))
+        }
+        
+
+    }
+    let ClosestFriendly:any[]=[]
+    let Index:number=0
+    let minDist:number=100000
+    let checkFriendlies:boolean=false
+    const noFriendlies:string="no friendlies in range"
+    let closingTime=''
+    if(externalResult.states==null){
+        ClosestFriendly.push(noFriendlies)
+    }else{
+        for (j=0;j<FriendliesWith_KnownLocation.length;j++){
+            if(FriendliesWith_KnownLocation[j].getInside()==true){
+                
+                if(FriendliesWith_KnownLocation[j].getDist()<minDist){
+                    minDist=FriendliesWith_KnownLocation[j].getDist();
+                    Index=FriendliesWith_KnownLocation[j].getIndexInArray();
+                    checkFriendlies=true;
+                    closingTime=''+FriendliesWith_KnownLocation[j].getInterceptTime();
+                }
+            }
+            
+        }
+        if(checkFriendlies==false){
+            ClosestFriendly.push(noFriendlies)
+        }else{
+            ClosestFriendly=externalResult.states[Index];
+        }
+
+    }
+    //const result = CalculatorD.check_inside_threat(x, y, a, b ,range);
+    //res.json({x,y,a,b,range,result})
+    console.log({speed,a,b,range,closingTime,ClosestFriendly})
+    res.json({speed,a,b,range,closingTime,ClosestFriendly})
     
 });
 

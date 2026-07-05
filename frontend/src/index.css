@@ -3,3 +3,8 @@
     margin: 5px;
 
 }
+.wrapper {
+    background-image: url('./assets/F15Background.jpg.jpeg');
+    width: 100%;
+    height: 100%;
+}
