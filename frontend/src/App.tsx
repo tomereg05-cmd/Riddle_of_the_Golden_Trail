@@ -8,13 +8,38 @@ import {
   Map,
   AdvancedMarker, 
   useMap,
+  Marker,
 } from "@vis.gl/react-google-maps";
 import axios from "axios";
+import background from "./assets/imges/F15Background.jpg.jpeg"
 //*/
+const mapStyle ={
+  width: "60vw", 
+  height: "40vh",
+}
+
 
 
 function App() {
 
+  
+  
+  const MapController = () => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (!map) return;
+
+      map.panTo(PinPoint);
+    }, [map]);
+    /*
+    const [mapCenter, setMapCenter] = useState({
+      lat: 32.0345901735186,
+      lng: 33.8249539518382,
+    });
+    */
+    return null; // This component doesn't need to render any UI
+  };
 
   const [threatD,setThreat] =useState({
     data: {
@@ -31,17 +56,12 @@ function App() {
     }
     
   })
-  const map = useMap();
-  const [mapCenter, setMapCenter] = useState({
+  
+  let PinPoint = {
     lat: threatD.data.lat_threat,
     lng: threatD.data.long_threat,
-  });
-   useEffect(() => {
-    if (!map) return;
-
-    map.panTo(mapCenter);
-  }, [mapCenter]);
-
+  }
+  const [secondPinPoint, setSecondPinPoint] = useState <{ lat:number ,lng:number } | null> (null);
 
   //mk4 faulty
 /*
@@ -180,6 +200,7 @@ function App() {
           interceptTime:'No friendlies in range!',
           }
       });
+      setSecondPinPoint(null)
     }else{
       let TTI:number//time to impact
       TTI = response.data.closingTime
@@ -202,21 +223,25 @@ function App() {
           range:response.data.range,
           jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
-          interceptTime: "Time to intercept: "+TTI+" Hours",
+          interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
         }
       });
+      setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
     }
-    setMapCenter
+    PinPoint = {
+      lat: response.data.b,
+      lng: response.data.a,
+    }
   }
   async function handle_Lau_LatChange____(e: { target: { value: any; }; }) {
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       speed: threatD.data.threatSpeed,
       a: threatD.data.long_threat,
-      b: e.target.value,
+      b: Number(e.target.value),
       range:threatD.data.range,
     });
-    console.log("the response of handle_Lau_LatChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept"+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
+    console.log("the response of handle_Lau_LatChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept: "+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
     
     if (response.data.ClosestFriendly[0]==="no friendlies in range"){
       setThreat({
@@ -233,6 +258,8 @@ function App() {
           interceptTime:'No friendlies in range!',
           }
       });
+      setSecondPinPoint(null)
+      console.log("hidden")
     }else{
       let TTI:number//time to impact
       TTI = response.data.closingTime
@@ -255,12 +282,17 @@ function App() {
           range:response.data.range,
           jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
-          interceptTime: "Time to intercept: "+TTI+" Hours",
+          interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
         }
       });
+      setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
+      console.log("shown")
     }
-    setMapCenter
+    PinPoint = {
+      lat: response.data.b,
+      lng: response.data.a,
+    }
     if(response.data.y < 0){
       threatD.data.n = 'S'  
     }else{
@@ -270,7 +302,7 @@ function App() {
   async function handle_Lau_LongChange____(e: { target: { value: any; }; }) {
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       speed: threatD.data.threatSpeed,
-      a: e.target.value,
+      a: Number(e.target.value),
       b: threatD.data.lat_threat,
       range:threatD.data.range,
     });
@@ -291,6 +323,7 @@ function App() {
           interceptTime:'No friendlies in range!',
           }
       });
+      setSecondPinPoint(null)
     }else{
       let TTI:number//time to impact
       TTI = response.data.closingTime
@@ -313,12 +346,16 @@ function App() {
           range:response.data.range,
           jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
-          interceptTime: "Time to intercept: "+TTI+" Hours",
+          interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
         }
       });
+      setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
     }
-    setMapCenter
+    PinPoint = {
+      lat: response.data.b,
+      lng: response.data.a,
+    }
     if (response.data.a <0){
       threatD.data.e = 'W'
     }else{
@@ -350,6 +387,7 @@ function App() {
           interceptTime:'No friendlies in range!',
           }
       });
+      setSecondPinPoint(null)
     }else{
       let TTI:number//time to impact
       TTI = response.data.closingTime
@@ -376,14 +414,26 @@ function App() {
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
         }
       });
+      setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
     }
-    setMapCenter
+    PinPoint = {
+      lat: response.data.b,
+      lng: response.data.a,
+    }
   }
   //*/
 
   return(
     <> 
-      <div className="baseline" >
+      <div style={{
+        backgroundImage:`url(${background})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        width: '100%',
+        height: "100vh",
+        textAlignLast:"center",
+      }} >
         <table style={{width:"100%",height:"100%" }}>
           <tbody>
 
@@ -394,9 +444,11 @@ function App() {
               </td>
             </tr>
             <tr>
-              <td colSpan={3}>
+              <td colSpan={3} style={{padding:"10px"}}>
                 <table>
-                  <tbody>
+                  <tbody style={{
+                    textAlignLast:"left", width:"100vw"
+                  }}>
                     <tr>
                       <td><div className="threat_param">Threat speed (MPH)</div></td>
                       <td>
@@ -408,6 +460,9 @@ function App() {
                       <td>
                         {threatD.data.interceptTime}
                       </td>
+                      <td style={{
+                        width:"40vw"
+                      }}></td>
                     </tr>
                     <tr>
                       <td>lat_Launch</td>
@@ -448,18 +503,24 @@ function App() {
                       </td>
                     </tr>
                     <tr>
-                      <td colSpan={3}>
-                        <div style={{ width: "60vw", height: "50vh" }}>
-
-                          <APIProvider apiKey="AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc" >
-                              <Map defaultZoom={8} defaultCenter={{ lat: threatD.data.lat_threat, lng: threatD.data.long_threat }} mapId="DEMO_MAP_ID">
-                                <AdvancedMarker
-                                    position={mapCenter}
-                                  />
-                              </Map>
+                      <td></td>
+                      <td colSpan={4} >
+                        <div style={{ width: "60vw", height: "40vh", textAlignLast:"center" }}>
+                          <APIProvider apiKey='AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc'>
+                            <Map
+                              mapContainerStyle={mapStyle}
+                              defaultCenter={PinPoint}
+                              defaultZoom={8}
+                              mapId="145e8a3d0d8ee82ae4e7a262"
+                            >
+                              <AdvancedMarker position={PinPoint}/>
+                              <MapController/>
+                              <AdvancedMarker position={secondPinPoint}/>
+                            </Map>
                           </APIProvider>
-                          </div>
+                        </div>
                       </td>
+                      <td></td>
                     </tr>
                       
 
@@ -507,6 +568,20 @@ function App() {
 
 
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc&callback=initMap"></script>
+
+
+
+
+<APIProvider apiKey="AIzaSyAXopL59J_almetTtcRi9YXp25YxLxyhoc" >
+                              <Map defaultZoom={8} defaultCenter={{ lat: threatD.data.lat_threat, lng: threatD.data.long_threat }} mapId="DEMO_MAP_ID">
+                                <AdvancedMarker
+                                    position={mapCenter}
+                                  />
+                              </Map>
+                          </APIProvider>
+
+
+
 
 
 
