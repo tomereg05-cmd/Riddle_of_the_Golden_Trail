@@ -25,7 +25,7 @@ container: Docker
 
 בפרונטאנד מריצים: npm run dev
 
-נכנסים דרך הדפדפן ל: http://localhost:5173/"
+נכנסים דרך הדפדפן ל: http://localhost:5201/"
 
 בתוך הדף מזינים מהירות איום,
 
