@@ -1,0 +1,15 @@
+version: 'v5.3.0'
+services:
+  bakend:
+    build: ./backend
+    ports:
+      -"5000:5000"
+    environment:
+      - DATABASE_URL='postgres://c4f746d2203ed5a5e792fd3a5de802595b1b98b2d1a5ccd67aabfcc664bb2f77:sk_lZlx-ao1oDOaS2x1YPAeV@db.prisma.io:5432/postgres?sslmode=require'
+    
+  frontend:
+    build: ./frontend
+    ports:
+      -"5201:5201"
+    depends_on:
+      - backend
