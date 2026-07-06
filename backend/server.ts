@@ -24,7 +24,7 @@ import { error } from 'node:console';
 
 
 const corsOptions = {
-    origin: 'http://localhost:5173', 
+    origin: 'http://localhost:5201', 
 }
 
 async function GetData_fetch (lamin:number,lomin:number,lamax:number,lomax:number) {
@@ -58,6 +58,56 @@ app.get("/api" , (req, res) => {
     res.json({ message: "Hello from the backend!  ;} " });
 });
 
+app.post("/api/saveData", async (req,res) => {
+    const {speed,a,b,range,ClosestFriendly}= req.body;
+    const operation = await prisma.operation.create({
+        data: {
+        threat: {
+            create: {
+            lat_threat:         b,
+            long_threat:        a,
+            speed_threat:       Number(speed),
+            range_threat:       range,
+
+            },
+        },
+        aircraft: {
+            create:{
+                icao24:             ClosestFriendly[0],
+                callsign:           ClosestFriendly[1],
+                origin_country:     ClosestFriendly[2],
+                time_position:      ClosestFriendly[3],
+                last_contact:       ClosestFriendly[4],
+                longitude:          ClosestFriendly[5],
+                latitude:           ClosestFriendly[6],
+                baro_altitude:      ClosestFriendly[7],
+                on_ground:          ClosestFriendly[8],
+                velocity:           ClosestFriendly[9],
+                true_track:         ClosestFriendly[10],
+                vertical_rate:      ClosestFriendly[11],
+                geo_altitude:       ClosestFriendly[13],
+                squawk:             ClosestFriendly[14],
+                spi:                ClosestFriendly[15],
+                position_source:    ClosestFriendly[16],
+            }
+        },
+        },
+        include: {
+        threat: true,
+        aircraft:true,
+        },
+    });
+    console.log("Created user:", operation);
+    res.json(false)
+});
+
+app.post("/api/tti", (req,res) => {
+    const {speed,a,b,range,dist,ClosestFriendly}=req.body;
+    console.log("initial param: "+speed+" "+a+" "+b+" "+range+" "+dist);
+    const tti=CalculatorD.TTI(dist,speed)
+    res.json({speed,a,b,range,tti,ClosestFriendly,dist})
+
+});
 
 
 
@@ -90,7 +140,7 @@ app.post('/api/check-threat', async (req, res) => {
                         j,
                         i[6],
                         i[5],
-                        CalculatorD.interceptingTime(distanceBetweenThem,speed)))
+                        CalculatorD.TTI(distanceBetweenThem,speed)))
                 }
                 
 
@@ -101,7 +151,7 @@ app.post('/api/check-threat', async (req, res) => {
         let minDist:number=100000
         let checkFriendlies:boolean=false
         const noFriendlies:string="no friendlies in range"
-        let closingTime=''
+        let tti=''
         
         if(externalResult.states==null){
             ClosestFriendly.push(noFriendlies)
@@ -113,7 +163,7 @@ app.post('/api/check-threat', async (req, res) => {
                         minDist=Friendlies_With_Known_Location[j].getDist();
                         Index=Friendlies_With_Known_Location[j].getIndexInArray();
                         checkFriendlies=true;
-                        closingTime=''+Friendlies_With_Known_Location[j].getInterceptTime();
+                        tti=''+Friendlies_With_Known_Location[j].getInterceptTime();
                         dist = Friendlies_With_Known_Location[j].getDist();
                     }
                 }
@@ -126,20 +176,21 @@ app.post('/api/check-threat', async (req, res) => {
             }
 
         }
-    
+        
         //const result = CalculatorD.check_inside_threat(x, y, a, b ,range);
         //res.json({x,y,a,b,range,result})
-        console.log({speed,a,b,range,closingTime,ClosestFriendly},"sending full")
-        return res.json({speed,a,b,range,closingTime,ClosestFriendly,dist})
+       
+        console.log({speed,a,b,range,tti,ClosestFriendly, dist},"sending full")
+        return res.json({speed,a,b,range,tti,ClosestFriendly,dist})
     }else{
         if(externalResult==null){
             console.log("there was an error fetching the data")
         }
     }
-    const errorClosingTime=''
-    const errorFriendly="no friendlies in range"
+    const tti=''
+    const ClosestFriendly="no friendlies in range"
     console.log("sending error")
-    res.json({speed,a,b,errorClosingTime,errorFriendly,dist})
+    res.json({speed,a,b,tti,ClosestFriendly,dist})
 });
 
 app.post('/api/underThreat',(req ,res) => {
@@ -152,7 +203,7 @@ app.post('/api/underThreat',(req ,res) => {
     6. create empty array Ans:ans[] and fill it using the line below
     7. call CalculatorD.all_Under_threat(jets[],threat)
     
-
+    //nevermide. done that on the API above
     */
    delay(1000).then(
 

@@ -416,7 +416,7 @@ class CalculatorD{
         return false;
     }
 
-    public static interceptingTime(dist:number,threatVelocity:number):number{
+    public static TTI(dist:number,threatVelocity:number):number{
         let time:number=dist/threatVelocity;
         return time;
     }

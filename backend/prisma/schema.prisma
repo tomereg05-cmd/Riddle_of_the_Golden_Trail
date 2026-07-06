@@ -39,7 +39,6 @@ model Aircraft{
   velocity Float?
   true_track Float?
   vertical_rate Float?
-  sensors Int[]
   geo_altitude Float?
   squawk String?
   spi Boolean
@@ -48,10 +47,10 @@ model Aircraft{
 }
 model Threat{
   id            Int     @id @default(autoincrement()) 
-  lat_threat    Int
-  long_threat   Int
-  speed_threat  Int
-  range_threat  Int
+  lat_threat    Float
+  long_threat   Float
+  speed_threat  Float
+  range_threat  Float
   operation     Operation[]
 }
 model Operation{

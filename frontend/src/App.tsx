@@ -54,7 +54,10 @@ function App() {
       jet_long:'',
       interceptTime:'',
       jet_id:'',
-      jet_threat_dist:''
+      jet_threat_dist:'',
+      jet_threat_distTrue:'',
+      closestFriendly:'',
+      saved:'',
     }
     
   })
@@ -65,6 +68,8 @@ function App() {
   }
   const [secondPinPoint, setSecondPinPoint] = useState <{ lat:number ,lng:number } | null> (null);
 
+  const [toggle,setToggle] = useState(false) 
+  const [toggle2,setToggle2]= useState(false)
   //mk4 faulty
 /*
   async function get_calculated_threat(lat_friend:number,long_friend:number,lat_threat:number,long_threat:number,range:number){
@@ -179,63 +184,84 @@ function App() {
 */
 
   async function handle_speedChange____(e: { target: { value: any; }; }) {
-    const response = await axios.post('http://localhost:5000/api/check-threat', {
-      speed: e.target.value,
-      a: threatD.data.long_threat,
-      b: threatD.data.lat_threat,
-      range:threatD.data.range,
-    });
-    console.log("the response of handleSpeedChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept"+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
+    if(threatD.data.jet_threat_dist!==''){
+
     
-    if (response.data.ClosestFriendly[0]==="no friendlies in range"){
-      setThreat({
-        ...threatD,
-        data: {
-          ...threatD.data,
-          threatSpeed: response.data.speed,
-          long_threat: response.data.a,
-          lat_threat: response.data.b,
-          range:response.data.range,
-          jet_lat:'',
-          jet_long:'',
-          jet_id:'',
-          interceptTime:'No friendlies in range!',
-          jet_threat_dist:'',
-          }
+      const response = await axios.post('http://localhost:5000/api/tti', {
+        speed: e.target.value,
+        a: threatD.data.long_threat,
+        b: threatD.data.lat_threat,
+        range:threatD.data.range,
+        dist:threatD.data.jet_threat_distTrue,
+        ClosestFriendly:threatD.data.closestFriendly
       });
-      setSecondPinPoint(null)
-    }else{
-      let TTI:number//time to impact
-      TTI = response.data.closingTime
-      TTI = Math.floor(TTI*10000)
-      TTI = TTI/10000
-      let tti:string =""+ TTI +" Hours"
-      if(response.data.closingTime<1){
-        TTI = TTI*60
-        TTI = Math.floor(TTI*10)
-        TTI = TTI/10
-        tti=""+TTI+" Minutes"
+      console.log("the response of handleSpeedChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept"+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
+      
+      if (response.data.ClosestFriendly[0]==="no friendlies in range"){
+        setThreat({
+          ...threatD,
+          data: {
+            ...threatD.data,
+            threatSpeed: response.data.speed,
+            long_threat: response.data.a,
+            lat_threat: response.data.b,
+            range:Number(response.data.range),
+            jet_lat:'',
+            jet_long:'',
+            jet_id:'',
+            interceptTime:'No friendlies in range!',
+            jet_threat_dist:'',
+            closestFriendly:''
+            }
+        });
+        setToggle(false)
+        setToggle2(false)
+        setSecondPinPoint(null)
+      }else{
+        let TTI:number//time to impact
+        TTI = Number(response.data.tti)
+        TTI = Math.floor(TTI*10000)
+        TTI = TTI/10000
+        let tti:string =""+ TTI +" Hours"
+        if(response.data.tti<1){
+          TTI = TTI*60
+          TTI = Math.floor(TTI*10)
+          TTI = TTI/10
+          tti=""+TTI+" Minutes"
+        }
+        setThreat({
+          ...threatD,
+          data: {
+            ...threatD.data,
+            threatSpeed: response.data.speed,
+            long_threat: response.data.a,
+            lat_threat: response.data.b,
+            range:Number(response.data.range),
+            jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
+            jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
+            interceptTime: "Time to intercept: "+tti,
+            jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[1],
+            jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
+            jet_threat_distTrue: response.data.dist,
+            closestFriendly:  response.data.ClosestFriendly,
+          }
+        });
+        setToggle(true)
+        setToggle2(false)
+        setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
       }
+      PinPoint = {
+        lat: response.data.b,
+        lng: response.data.a,
+      }
+    }else{
       setThreat({
         ...threatD,
         data: {
           ...threatD.data,
-          threatSpeed: response.data.speed,
-          long_threat: response.data.a,
-          lat_threat: response.data.b,
-          range:response.data.range,
-          jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
-          jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
-          interceptTime: "Time to intercept: "+tti,
-          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
-          jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
+          threatSpeed:e.target.value,
         }
       });
-      setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
-    }
-    PinPoint = {
-      lat: response.data.b,
-      lng: response.data.a,
     }
   }
   async function handle_Lau_LatChange____(e: { target: { value: any; }; }) {
@@ -261,23 +287,26 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:'',
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
           jet_threat_dist:'',
+          closestFriendly:''
           }
       });
+      setToggle(false)
+      setToggle2(false)
       setSecondPinPoint(null)
       console.log("hidden")
     }else{
       let TTI:number//time to impact
-      TTI = response.data.closingTime
+      TTI = Number(response.data.tti)
       TTI = Math.floor(TTI*10000)
       TTI = TTI/10000
       let tti:string =""+ TTI +" Hours"
-      if(response.data.closingTime<1){
+      if(response.data.tti<1){
         TTI = TTI*60
         TTI = Math.floor(TTI*10)
         TTI = TTI/10
@@ -290,14 +319,19 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime: "Time to intercept: "+tti,
-          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[1],
           jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
+          jet_threat_distTrue: response.data.dist,
+          closestFriendly:  response.data.ClosestFriendly,
+
         }
       });
+      setToggle(true)
+      setToggle2(false)
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
       console.log("shown")
     }
@@ -334,22 +368,25 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:'',
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
           jet_threat_dist:'',
+          closestFriendly:'',
           }
       });
+      setToggle(false)
+      setToggle2(false)
       setSecondPinPoint(null)
     }else{
       let TTI:number//time to impact
-      TTI = response.data.closingTime
+      TTI = Number(response.data.tti)
       TTI = Math.floor(TTI*10000)
       TTI = TTI/10000
       let tti:string =""+ TTI +" Hours"
-      if(response.data.closingTime<1){
+      if(response.data.tti<1){
         TTI = TTI*60
         TTI = Math.floor(TTI*10)
         TTI = TTI/10
@@ -362,14 +399,18 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:          "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:         "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime:    "Time to intercept: "+tti,
-          jet_id:           "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_id:           "Friendly Registry: "+response.data.ClosestFriendly[1],
           jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
+          jet_threat_distTrue: response.data.dist,
+          closestFriendly:  response.data.ClosestFriendly,
         }
       });
+      setToggle(true)
+      setToggle2(false)
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
     }
     PinPoint = {
@@ -389,9 +430,9 @@ function App() {
       b: threatD.data.lat_threat,
       range: e.target.value
     });
-    console.log("the response of handleRChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept"+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
+    console.log("the response of handleRChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept: "+(response.data.tti)+" friendly: "+(response.data.ClosestFriendly))
     
-    if (response.data.ClosestFriendly[0]==="no friendlies in range"){
+    if (response.data.ClosestFriendly[0]=="no friendlies in range"){
       setThreat({
         ...threatD,
         data: {
@@ -399,22 +440,25 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:'',
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
           jet_threat_dist:'',
+          closestFriendly:'',
           }
       });
+      setToggle(false)
+      setToggle2(false)
       setSecondPinPoint(null)
     }else{
       let TTI:number//time to impact
-      TTI = response.data.closingTime
+      TTI = Number(response.data.tti)
       TTI = Math.floor(TTI*10000)
       TTI = TTI/10000
       let tti:string =""+ TTI +" Hours"
-      if(response.data.closingTime<1){
+      if(response.data.tti<1){
         TTI = TTI*60
         TTI = Math.floor(TTI*10)
         TTI = TTI/10
@@ -427,14 +471,18 @@ function App() {
           threatSpeed: response.data.speed,
           long_threat: response.data.a,
           lat_threat: response.data.b,
-          range:response.data.range,
+          range:Number(response.data.range),
           jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime: "Time to intercept: "+tti,
-          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[1],
           jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
+          jet_threat_distTrue: response.data.dist,
+          closestFriendly:  response.data.ClosestFriendly,
         }
       });
+      setToggle(true)
+      setToggle2(false)
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
     }
     PinPoint = {
@@ -443,6 +491,22 @@ function App() {
     }
   }
   //*/
+  async function handleSave____(){
+    const result = await axios.post("http://localhost:5000/api/saveData",{
+      speed: threatD.data.threatSpeed,
+      a: threatD.data.long_threat,
+      b: threatD.data.lat_threat,
+      range:threatD.data.range,
+      ClosestFriendly:threatD.data.closestFriendly,
+    });
+    console.log(result)
+    setToggle(result.data);
+    console.log("button Gone! puf!")
+    setToggle2(true)
+    
+    
+  }
+
 
   return(
     <> 
@@ -498,7 +562,16 @@ function App() {
                       <td className="friendly">
                         {threatD.data.jet_lat}
                       </td>
-                      
+                      <td>
+                        {toggle &&(
+                        <button onClick={handleSave____}>
+                          save operation
+                        </button>
+                        )}
+                        {toggle2&& (
+                          <div style={{color:"#5662f6"}}>Saved!</div>
+                        )}
+                      </td>
                     </tr>
                     <tr>
                       <td>long_Launch</td>
