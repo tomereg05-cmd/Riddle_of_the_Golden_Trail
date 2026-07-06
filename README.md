@@ -12,17 +12,16 @@ container: Docker
 
 הוראות הפעלה:<br/>
 <br/>
-מריצים 2 טרמינלים במקביל<br/>
-באחד מכניסים: cd backend<br/>
-בשני: cd frontend<br/>
-בבקנד מריצים: npm run  devStart<br/>
-בפרונטאנד מריצים: npm run dev<br/>
+מריצים בטרמינל:
+<br/>
+cd /where_you_downloaded_to/Riddle_of_the_Golden_Trail
+<br/>
+docker compose up --build
+<br/>
 נכנסים דרך הדפדפן ל: http://localhost:5201/"<br/>
 בתוך הדף מזינים מהירות איום,<br/>
 latitude איום, <br/>
 longitude איום, <br/>
-טווח איום 
-
-
-
+טווח איום <br/>
+<br/>
 בהתאם על המסך יוצגו פרטים על המטוס מאוים הקרוב ביותר או שאין מטוס בטווח
