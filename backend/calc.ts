@@ -125,7 +125,7 @@ export class jet {
         return this.direction;
     }
 }
-
+/*
 export class ans{
     private IsIn:boolean;
     private Range:number;
@@ -147,6 +147,7 @@ export class ans{
     }
 
 }
+*/
 export class importantDataClient{
     private inside:boolean
     private dist:number
@@ -203,7 +204,9 @@ export class importantDataClient{
 
 class CalculatorD{
     
+    /*
     public static fakeAPI(){
+        
         return{
             "time": 1783162325,
             "states": [
@@ -280,9 +283,11 @@ class CalculatorD{
                 false, 0]
             ]
         }
+            
     }
+    */
 
-
+    /*
     public static all_Under_threat(jets:jet[],T:threat):ans[]{  
         let a:ans[]=[];
         let b:ans;
@@ -301,6 +306,9 @@ class CalculatorD{
 
         return(a)
     }
+    */
+
+
 
     public static calcDist (lat1:number,long1:number, lat2:number, long2:number): number{
         let R:number=3443.92 //nautical miles
@@ -320,7 +328,7 @@ class CalculatorD{
     }
     
     public static check_inside_threat (long_friend: number, lat_friend: number, long_threat: number, lat_threat: number, dist_miles:number): boolean {
-        console.log(`Checking if coordinates: (${lat_friend}, ${long_friend}) is inside or on the circle with center at: (${lat_threat}, ${long_threat}) and threat radius of: ${dist_miles}`);
+        console.log(`Checking if coordinates: (${lat_friend}, ${long_friend}) is inside or on the circle with center at: (${lat_threat}, ${long_threat}) and threat radius of: ${dist_miles} nautical Miles`);
         let distanceInMiles=this.calcDist(lat_friend,long_friend,lat_threat,long_threat);
         distanceInMiles=Math.floor(distanceInMiles*1000);
         distanceInMiles=distanceInMiles/1000;
@@ -361,36 +369,41 @@ class CalculatorD{
 
     public static find_Edge (a: number, b: number, r: number): { east: number, west: number, north: number, south: number } {
         console.log(`Finding edge coordinates with center at: (${a}, ${b}) and threat radius of: ${r} as a square` );
-        let north = a + r;
-        let south = a - r;
-        let east = b + r;
-        let west = b - r;
-        if (b + r > 180) {
+        let rangeDeg=r/60;
+        let north = b + rangeDeg;
+        let south = b - rangeDeg;
+        let east = a + rangeDeg;
+        let west = a - rangeDeg;
+        if (b + rangeDeg > 180) {
             console.log(`East edge exceeds 180 degrees, adjusting to 180`);
             east = (-180) + ((b + r) - 180);
             //should run west ->180; and -180 ->east;
         }
-        if (b - r < -180) {
+        if (b - rangeDeg < -180) {
             console.log(`West edge exceeds -180 degrees, adjusting to -180`);
-            west = 180 - ((b - r) + 180);
+            west = 180 - ((b - rangeDeg) + 180);
             //should run west ->180; and -180 ->east;
         }
         //לא הצלחתי למצוא דרך לחשב מרחק הכי קצר באיזור הקטבים מסביב ל90מעלות
-        if (a + r > 90) {
+        if (a + rangeDeg > 86) {
             console.log(`North edge exceeds 90 degrees, adjusting to 90`);
             north = 90;
+            east =180
+            west=-180
         }
-        if (a - r < -90) {
+        if (a - rangeDeg < -86) {
             console.log(`South edge exceeds -90 degrees, adjusting to -90`);
             south = -90;
+            east =180
+            west=-180
         }
 
         return { east, west, north, south };
     }
 
-    /*
-    console.log(find_Edge(0, 175, 8)); // { east: 2, west: -2, north: 2, south: -2 }
-    */
+    
+    //console.log(find_Edge(0, 175, 8)); // { east: 2, west: -2, north: 2, south: -2 }
+    
 
 
 

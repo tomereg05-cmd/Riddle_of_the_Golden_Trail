@@ -1,15 +1,13 @@
 body {
 font-family: Arial, sans-serif;
-margin: 20px;
 }
 table {
-border-collapse: collapse;
+
 width: 100%;
 }
 td {
 background-color: transparent;
-padding: 8px;
-border: 1px solid #ddd;
+color: red;
 }
 tr{
 background-color: transparent;
@@ -20,6 +18,9 @@ width:100%;
 }
 
 
-.threat_param {
-text-emphasis-color: red;
+.not_Sided {
+color: rgb(0, 0, 0);
+}
+.friendly{
+    color: rgb(11, 172, 11);
 }

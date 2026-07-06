@@ -1,5 +1,6 @@
 
 import { useState , useEffect} from "react";
+import './App.css'
 //import CalculatorD from "../../backend/calc.ts";
 //import React from "react";
 ///*
@@ -8,7 +9,7 @@ import {
   Map,
   AdvancedMarker, 
   useMap,
-  Marker,
+  Pin,
 } from "@vis.gl/react-google-maps";
 import axios from "axios";
 import background from "./assets/imges/F15Background.jpg.jpeg"
@@ -34,7 +35,7 @@ function App() {
     }, [map]);
     /*
     const [mapCenter, setMapCenter] = useState({
-      lat: 32.0345901735186,
+      lat: 32.0345901735185,
       lng: 33.8249539518382,
     });
     */
@@ -44,7 +45,7 @@ function App() {
   const [threatD,setThreat] =useState({
     data: {
       threatSpeed: 250,
-      lat_threat: 32.0345901735186,
+      lat_threat: 32.0345901735185,
       long_threat: 33.8249539518382,
       n: 'N',
       e: 'E',
@@ -53,6 +54,7 @@ function App() {
       jet_long:'',
       interceptTime:'',
       jet_id:'',
+      jet_threat_dist:''
     }
     
   })
@@ -198,6 +200,7 @@ function App() {
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
+          jet_threat_dist:'',
           }
       });
       setSecondPinPoint(null)
@@ -225,6 +228,7 @@ function App() {
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
         }
       });
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
@@ -235,10 +239,16 @@ function App() {
     }
   }
   async function handle_Lau_LatChange____(e: { target: { value: any; }; }) {
+    let correction=e.target.value
+    if(e.target.value>89){
+      correction=89
+    }else if(e.target.value<-89){
+      correction=-89
+    }
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       speed: threatD.data.threatSpeed,
       a: threatD.data.long_threat,
-      b: Number(e.target.value),
+      b: Number(correction),
       range:threatD.data.range,
     });
     console.log("the response of handle_Lau_LatChange is: speed:"+(response.data.speed)+" a:"+(response.data.a)+" b:"+(response.data.b)+" range:"+(response.data.range)+" timeToIntercept: "+(response.data.closingTime)+" friendly:"+(response.data.ClosestFriendly))
@@ -256,6 +266,7 @@ function App() {
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
+          jet_threat_dist:'',
           }
       });
       setSecondPinPoint(null)
@@ -284,6 +295,7 @@ function App() {
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
         }
       });
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
@@ -300,9 +312,15 @@ function App() {
     }
   }
   async function handle_Lau_LongChange____(e: { target: { value: any; }; }) {
+    let correction=e.target.value
+    if(e.target.value>179.9){
+      correction=179.9
+    }else if(e.target.value<-179.9){
+      correction=-179.9
+    }
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       speed: threatD.data.threatSpeed,
-      a: Number(e.target.value),
+      a: Number(correction),
       b: threatD.data.lat_threat,
       range:threatD.data.range,
     });
@@ -321,6 +339,7 @@ function App() {
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
+          jet_threat_dist:'',
           }
       });
       setSecondPinPoint(null)
@@ -344,10 +363,11 @@ function App() {
           long_threat: response.data.a,
           lat_threat: response.data.b,
           range:response.data.range,
-          jet_lat:       "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
-          jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
-          interceptTime: "Time to intercept: "+tti,
-          jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_lat:          "Colsest frindly at lat:  "+response.data.ClosestFriendly[6],
+          jet_long:         "Colsest frindly at long: "+response.data.ClosestFriendly[5],
+          interceptTime:    "Time to intercept: "+tti,
+          jet_id:           "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
         }
       });
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
@@ -363,7 +383,6 @@ function App() {
     }
   }
   async function handleRChange____(e: { target: { value: any; }; }) {
-    
     const response = await axios.post('http://localhost:5000/api/check-threat', {
       speed: threatD.data.threatSpeed,
       a: threatD.data.long_threat,
@@ -385,6 +404,7 @@ function App() {
           jet_long:'',
           jet_id:'',
           interceptTime:'No friendlies in range!',
+          jet_threat_dist:'',
           }
       });
       setSecondPinPoint(null)
@@ -412,6 +432,7 @@ function App() {
           jet_long:      "Colsest frindly at long: "+response.data.ClosestFriendly[5],
           interceptTime: "Time to intercept: "+tti,
           jet_id:        "Friendly Registry: "+response.data.ClosestFriendly[2],
+          jet_threat_dist:  "distance from theat to target is: "+response.data.dist+" nautical Miles",
         }
       });
       setSecondPinPoint({lat:response.data.ClosestFriendly[6] , lng:response.data.ClosestFriendly[5]})
@@ -434,13 +455,13 @@ function App() {
         height: "100vh",
         textAlignLast:"center",
       }} >
-        <table style={{width:"100%",height:"100%" }}>
+        <table style={{width:"100%",height:"100%", fontFamily:"fantasy"}}>
           <tbody>
 
           
             <tr>
               <td colSpan={3}>
-                <h1 style={{fontFamily:"cursive"}}>Find the closest friendly jet threatened</h1>
+                <h1 style={{fontFamily:"cursive", color:"black"}}>Find the closest friendly jet threatened</h1>
               </td>
             </tr>
             <tr>
@@ -450,19 +471,21 @@ function App() {
                     textAlignLast:"left", width:"100vw"
                   }}>
                     <tr>
-                      <td><div className="threat_param">Threat speed (MPH)</div></td>
+                      <td><div>Threat speed (MPH)</div></td>
                       <td>
                         <input
                           type="number"
                           value={threatD.data.threatSpeed}
                           onChange={handle_speedChange____}/>
                       </td>
-                      <td>
+                      <td  className="not_Sided">
                         {threatD.data.interceptTime}
                       </td>
-                      <td style={{
-                        width:"40vw"
-                      }}></td>
+                      <td className="not_Sided" style={{
+                        width:"40vw",
+                      }}>
+                        {threatD.data.jet_threat_dist}
+                      </td>
                     </tr>
                     <tr>
                       <td>lat_Launch</td>
@@ -472,7 +495,7 @@ function App() {
                           value={threatD.data.lat_threat}
                           onChange={handle_Lau_LatChange____}/>
                       </td>
-                      <td>
+                      <td className="friendly">
                         {threatD.data.jet_lat}
                       </td>
                       
@@ -485,7 +508,7 @@ function App() {
                           value={threatD.data.long_threat}
                           onChange={handle_Lau_LongChange____}/>
                       </td>
-                      <td>
+                      <td className="friendly">
                         {threatD.data.jet_long}
                       </td>
                     </tr>
@@ -498,7 +521,7 @@ function App() {
                           onChange={handleRChange____}/>
                           
                       </td>
-                      <td>
+                      <td className="friendly">
                         {threatD.data.jet_id}
                       </td>
                     </tr>
@@ -513,9 +536,11 @@ function App() {
                               defaultZoom={8}
                               mapId="145e8a3d0d8ee82ae4e7a262"
                             >
-                              <AdvancedMarker position={PinPoint}/>
+                              <AdvancedMarker position={PinPoint} title="Threat launch">
+                                <Pin background={"#ff0000"} borderColor={"#ff0000"} glyphColor={"#ff9c07"} />
+                              </AdvancedMarker>
                               <MapController/>
-                              <AdvancedMarker position={secondPinPoint}/>
+                              <AdvancedMarker position={secondPinPoint} title="Closest friendly"/>
                             </Map>
                           </APIProvider>
                         </div>
@@ -531,7 +556,7 @@ function App() {
             <tr>
               <td colSpan={2}>
                 <div>
-                  <i style={{fontFamily:"cursive"}}>launched from: {threatD.data.long_threat} {threatD.data.n}° , {threatD.data.lat_threat} {threatD.data.e}°. with a range of: {threatD.data.range} nautical Miles</i>
+                  <i  className="not_Sided" style={{fontFamily:"cursive",}}>launched from: {Math.floor(threatD.data.long_threat*10000)/10000} {threatD.data.n}° , {Math.floor(threatD.data.lat_threat*10000)/10000} {threatD.data.e}°. with a range of: {threatD.data.range} nautical Miles</i>
                 </div>
               </td>
             </tr>
