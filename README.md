@@ -1,18 +1,14 @@
 # Riddle_of_the_Golden_Trail
 
 Technologies I decided to use:
-
-Front End: React
-
-Backend: Express
-
-db<->backend: Prisma 
-
-SQL: postgerss
-
+<br/>
+Front End: React typeScript<br/>
+Backend: Express<br/>
+db<->backend: Prisma <br/>
+SQL: postgerss<br/>
 container: Docker
-
-
+<br/>
+<br/>
 
 
 מריצים 2 טרמינלים במקביל<br/>
