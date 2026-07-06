@@ -15,24 +15,15 @@ container: Docker
 
 
 
-מריצים 2 טרמינלים במקביל
-
-באחד מכניסים: cd backend
-
-בשני: cd frontend
-
-בבקנד מריצים: npm run  devStart
-
-בפרונטאנד מריצים: npm run dev
-
-נכנסים דרך הדפדפן ל: http://localhost:5201/"
-
-בתוך הדף מזינים מהירות איום,
-
-latitude איום,
-
-longitude איום, 
-
+מריצים 2 טרמינלים במקביל<br/>
+באחד מכניסים: cd backend<br/>
+בשני: cd frontend<br/>
+בבקנד מריצים: npm run  devStart<br/>
+בפרונטאנד מריצים: npm run dev<br/>
+נכנסים דרך הדפדפן ל: http://localhost:5201/"<br/>
+בתוך הדף מזינים מהירות איום,<br/>
+latitude איום, <br/>
+longitude איום, <br/>
 טווח איום 
 
 
