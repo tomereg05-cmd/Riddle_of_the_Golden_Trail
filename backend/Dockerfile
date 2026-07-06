@@ -1,6 +1,6 @@
 FROM node:24.18.0
 
-WORKDIR /appno
+WORKDIR /app
 
 COPY pacage*.json ./
 
