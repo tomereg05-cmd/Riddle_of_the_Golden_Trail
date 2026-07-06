@@ -10,7 +10,8 @@ container: Docker
 <br/>
 <br/>
 
-
+הוראות הפעלה:<br/>
+<br/>
 מריצים 2 טרמינלים במקביל<br/>
 באחד מכניסים: cd backend<br/>
 בשני: cd frontend<br/>
