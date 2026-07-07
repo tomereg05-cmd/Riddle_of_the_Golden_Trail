@@ -15,7 +15,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL: "postgresql://meyou:5534326t@database:5432/riddle_db?schema=public"
+      DATABASE_URL: "postgresql://meyou:5534326t@database:5432/riddle_db?schema=public"
     depends_on:
       - database
     
