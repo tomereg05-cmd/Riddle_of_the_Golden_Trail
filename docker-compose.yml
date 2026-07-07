@@ -4,9 +4,9 @@ services:
     image: postgres 18-alpine
     restart: always
     environment:
-      - POSTGRES_USER: meyou
-      - POSTGRES_PASSWORD: 5534326t
-      - POSTGRES_DB: riddle_db
+       POSTGRES_USER: meyou
+       POSTGRES_PASSWORD: 5534326t
+       POSTGRES_DB: riddle_db
     ports:
       - "5432:5432"
     volumes:
