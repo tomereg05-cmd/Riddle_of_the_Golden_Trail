@@ -1,11 +1,24 @@
 version: 'v5.3.0'
 services:
+  database:
+    image: postgres 18-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER: meyou
+      - POSTGRES_PASSWORD: 5534326t
+      - POSTGRES_DB: riddle_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   backend:
     build: ./backend
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL='postgres://c4f746d2203ed5a5e792fd3a5de802595b1b98b2d1a5ccd67aabfcc664bb2f77:sk_lZlx-ao1oDOaS2x1YPAeV@db.prisma.io:5432/postgres?sslmode=require'
+      - DATABASE_URL="postgresql://meyou:5534326t@database:5432/riddle_db?schema=public"
+    depends_on:
+      - database
     
   frontend:
     build: ./frontend
@@ -13,3 +26,6 @@ services:
       - "5201:5201"
     depends_on:
       - backend
+
+volumes:
+  op_data:

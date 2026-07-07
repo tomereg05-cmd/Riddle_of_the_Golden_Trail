@@ -15,4 +15,4 @@ ENV port=5000
 
 EXPOSE 5000
 
-CMD ["npm", "run", "devStart"]
+CMD npx prisma db push && npm run devStart
