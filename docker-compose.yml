@@ -10,6 +10,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 8s
+      timeout: 8s
+      retries: 5
+      start_period: 30s
   backend:
     build: ./backend
     ports:
@@ -17,7 +23,8 @@ services:
     environment:
       DATABASE_URL: "postgresql://meyou:5534326t@database:5432/riddle_db?schema=public"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     
   frontend:
     build: ./frontend
